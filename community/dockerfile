@@ -1,0 +1,12 @@
+FROM ubuntu:latest
+
+RUN apt-get update
+RUN apt-get upgrade --yes
+RUN apt-get install curl --yes
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get install nodejs --yes
+
+WORKDIR /home
+
+EXPOSE 22
+EXPOSE 3000

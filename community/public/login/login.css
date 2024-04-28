@@ -1,0 +1,101 @@
+/* 전체 틀 */
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #F4F5F7;
+    width: 100%;
+    height: 100vh;
+}
+
+/* 제목: 아무 말 대잔치 */
+.header {
+    width: 1920px;
+    height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.titleTop {
+    color: black;
+    font-size: 32px;
+}
+/* line */
+.line {
+    width: 100%;
+    size: 1px;
+}
+/* 하단부 */
+.footer {
+    width: 1920px;
+    height: 976px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.title {
+    font-weight: bold;
+    color:black;
+    font-size: 38px;
+}
+/* 로그인 입력 창 */
+.inputBox {
+    width: 392px;
+    height: 198px;
+    padding-top: 23px;
+    border: solid;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 5px;
+}
+.inputTitle {
+    margin-left: 12px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+.input {
+    width: 355px;
+    height: 33px;
+    margin-inline: 10px;
+    border: solid;
+    padding-left: 8px;
+    border-width: 1.5px;
+    border-radius: 5px;
+}
+.helperText {
+    margin-left: 12px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: red;
+}
+/* 버튼 */
+.buttonBox {
+    width: 361px;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.loginButton {
+    width: 361px;
+    height: 37px;
+    background-color: #ACA0EB;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.signinButton {
+    width: 68px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    margin-top: 4px;
+}

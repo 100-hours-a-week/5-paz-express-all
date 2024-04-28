@@ -1,0 +1,187 @@
+/* 전체 틀 */
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #F4F5F7;
+    width: 100%;
+    height: 100vh;
+}
+
+/* 제목: 아무 말 대잔치 */
+.header {
+    display:flex;
+    align-items: center;
+    flex-direction: row;
+    width: 1920px;
+}
+.titleTop {
+    font-size: 32px;
+    margin-left: 857px;
+}
+
+ /* 드롭다운 */
+ .dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdownBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50px;
+    margin-left: 133px;
+    background-image: url("/assets/images/lightHouse.jpg");
+}
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: #D9D9D9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+.dropdownContent a {
+    float: none;
+    color: black;
+    background-color: #D9D9D9;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+.dropdownContent a:hover {
+    background-color: lightslategray;
+}
+.dropdown:hover .dropdownContent {
+    display: block;
+}
+.dropdown:hover .dropdownBtn {
+    background-color: #ACA0EB;
+}
+
+/* 경계선 */
+.lineWhole {
+    width:100%;
+    height: 1px;
+    background-color: black;
+}
+
+/* 하단부 */
+.footer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 1920px;
+    height: 976px;
+}
+.titleBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+.title {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    font-size: 24px;
+}
+.create {
+    width: 138px;
+    height: 49px;
+    border-radius: 25px;
+    border: none;
+    background-color: #ACA0EB;
+    color: white;
+    font-size: 16px;
+    margin-left: 1118px;
+    margin-right: 664px;
+}
+.create:hover{
+    background-color: #7F6AEE;
+}
+/* 게시글 리스트 */
+.contents {
+    overflow: auto;
+    margin-top: 24px;
+    width: 1920px;
+    height: 787px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 게시글 단락 */
+.content {
+    width: 592px;
+    height: 169px;
+    margin-bottom: 16px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    padding: 17px
+}
+.contentHeader {
+    height: 100px;
+}
+.contentTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0px;
+}
+.contentInfoBox {
+    display: flex;
+    width: 400px;
+    margin-top: 20px;
+    flex-direction: row;
+    align-items: center;
+}
+.contentInfoCheck {
+    width: 600px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 14px;
+}
+.contentInfoReply {
+    margin-left: 15px;
+    width: 60px;
+    font-size: 14px;
+}
+.contentInfoWatch {
+    width: 80px;
+    font-size: 14px;
+}
+.contentInfoTime {
+    width: 250px;
+    font-size: 14px;
+    margin-left: 210px; 
+}
+.box {
+    width: 80px;
+}
+
+.lineContent {
+    width: 592px;
+    height: 3px;
+    border: none;
+    background-color: #F4F5F7;
+    margin-bottom: 0px;
+}
+
+.contentFooter {
+    height: 69px;
+    width: 592px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50px;
+    margin-right: 17px;
+}
+.contentCreater {
+    font-size: 15px;
+    margin-bottom: 13px;
+    font-weight: bold;
+}
