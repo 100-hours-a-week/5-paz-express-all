@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/main/readPost/post.css" />
+    <title>커뮤니티 게시글 상세조회</title>
+</head>
+
+<body>
+    <section class="body">
+        <section class="header">
+            <button class="backBtn" onclick="history.back()"></button>
+            <p class="titleTop">아무 말 대잔치</p>
+            <section class="dropdown">
+                <input class="dropdownBtn" type="image" src="/assets/images/imageInput.png"/>
+                <section class="dropdownContent">
+                    <a href="/community/profile">회원정보 수정</a>
+                    <a href="/community/password">비밀번호 수정</a>
+                    <a onclick="logout()">로그아웃</a>
+                </section>
+            </section>
+        </section>
+        <hr class="lineWhole" />
+
+        <!-- 하단부 -->
+        <section class="footer">
+            <!-- 컨텐츠 메인 -->
+            <section id="content" class="content">
+                
+            </section>
+
+            <hr class="lineContent" noshade="noshade" />
+
+            <!-- 댓글 입력 창 -->
+            <section class="writeReply">
+                <textarea class="textInput" id="inputReply" placeholder="댓글을 남겨주세요!" onchange="replyChk()"></textarea>
+                <hr class="lineContent" />
+                <button class="submit" onclick="addComment()">댓글 등록</button>
+            </section>
+
+            <!-- 댓글 자리 -->
+            <section id="replys" class="replys">
+                
+            </section>
+        </section>
+    </section>
+    <script type="module" src="/main/readPost/post.js"></script>
+</body>
+
+</html>

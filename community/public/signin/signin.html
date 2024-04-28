@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/signin/signin.css" />
+    <title>커뮤니티 회원가입</title>
+</head>
+
+<body class="body">
+    <section class="header">
+        <p class="titleTop">아무 말 대잔치</p>
+    </section>
+
+    <hr class="line">
+
+    <section class="footer">
+        <section class="box">
+            <p class="title">회원가입</p>
+            <!-- 프로필 이미지 업로드 단락 -->
+            <section class="imageBox"> 
+                <p class="inputTitleImage">프로필 사진</p>
+                <p class="helperImage" id="imageHelper">* 프로필 사진을 추가해주세요.</p>
+                <label class="imageInput" for="uploadImage" type="image" id="userImage">
+                    <img class="image" src="../assets/images/imageInput.png">
+                    <input type="file" id="uploadImage" accept="image/*" onchange="uploadImage();" style="display: none;"/>
+                </label>
+            </section>
+            <section class="inputBox">
+                <!-- 이메일 입력창 단락 -->
+                <section class="inputArea">
+                    <p class="inputTitle">이메일</p>
+                    <input class="textInput" type="text" id="email" placeholder="이메일을 입력하세요" onblur="emailChk();">
+                </section>
+                <p class="emailHelper">* 이메일을 입력해주세요.</p>
+                <!-- 비밀번호 입력창 단락 -->
+                <section class="inputArea">
+                    <p class="inputTitle">비밀번호</p>
+                    <input class="textInput" type="password" id="password" placeholder="비밀번호를 입력해주세요" onblur="passwordChk();">
+                </section>
+                <p class="passwordHelper">* 비밀번호를 입력해주세요.</p>
+                <!-- 비밀번호 재입력창 단 -->
+                <section class="inputArea">
+                    <p class="inputTitle">비밀번호 확인</p>
+                    <input class="textInput" type="password" id="passwordChk" placeholder="비밀번호를 한번 더 입력해주세요" onblur="passwordChk();">
+                </section>
+                <p class="repasswordHelper">* 비밀번호를 한번 더 입력해주세요.</p>
+                <!-- 닉네임 입력창 단락 -->
+                <section class="inputArea">
+                    <p class="inputTitle">닉네임</p>
+                    <input class="textInput" type="text" id="nickname" placeholder="닉네임을 입력하세요" onblur="nicknameChk();">
+                </section>
+                <p class="nicknameHelper">* 닉네임을 입력해주세요.</p>
+                <button class="signinButton" onclick="register();">
+                    <p>회원가입</p>
+                </button>
+            </section>
+            <section class="buttonBox">
+                <a class="toLoginButton" href="/community">
+                    로그인하러 가기
+                </a>
+            </section>
+        </section>
+    </section>
+    <script type="text/javaScript" src="/signin/signin.js"></script>
+</body>
+
+</html>

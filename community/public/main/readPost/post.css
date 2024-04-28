@@ -1,0 +1,311 @@
+/* 전체 틀 */
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #F4F5F7;
+    width: 100%;
+    height: 100vh;
+}
+
+/* 제목: 아무 말 대잔치 */
+.header {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    width: 1920px;
+}
+.titleTop {
+    font-size: 32px;
+    margin-left: 133px;
+}
+.backBtn {
+    width: 40px;
+    height: 40px;
+    margin-left: 677px;
+    border-radius: 50px;
+    border: none;
+    background-color: #F4F5F7;
+    background-image: url("/assets/images/backBtn.png");
+}
+
+/* 드롭다운 */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdownBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50px;
+    margin-left: 133px;
+    background-image: url("/assets/images/lightHouse.jpg");
+}
+
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: #D9D9D9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+
+.dropdownContent a {
+    float: none;
+    color: black;
+    background-color: #D9D9D9;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdownContent a:hover {
+    background-color: lightslategray;
+}
+
+.dropdown:hover .dropdownContent {
+    display: block;
+}
+
+.dropdown:hover .dropdownBtn {
+    background-color: #ACA0EB;
+}
+
+/* 경계선 */
+.lineWhole {
+    width: 100%;
+    height: 1px;
+    background-color: black;
+}
+
+/* 하단부 */
+.footer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 1920px;
+    height: 976px;
+    overflow-y: auto;
+}
+
+.titleBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+    width: 592px;
+    height: 83px;
+    margin-bottom: 12px;
+}
+
+.contentTitle {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* 게시글 단락 */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.contentHeader {
+    height: 100px;
+}
+
+.contentInfoBox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 544px;
+}
+
+.icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50px;
+    margin-right: 17px;
+}
+
+.contentCreater {
+    font-size: 15px;
+    margin-bottom: 13px;
+    font-weight: bold;
+}
+
+.contentInfoTime {
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.buttonBox {
+    display: flex;
+    flex-direction: row;
+    width: 108px;
+    height: 27px;
+    margin-left: 200px;
+}
+
+.button {
+    width: 50px;
+    height: 27px;
+    border: solid;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #D9D9D9;
+    font-size: 17px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin-left: 8px;
+}
+
+/* 구분선 */
+.lineContent {
+    width: 592px;
+    height: 2px;
+    background-color: #D9D9D9;
+    margin-top: 12px;
+    margin-bottom: 0px;
+    border-radius: 2em;
+}
+
+/* 내용 */
+.contentImage {
+    margin-top: 24px;
+    width: 544px;
+}
+.textBox {
+    margin-top: 24px;
+    width: 544px;
+}
+/* 조회수/댓글 */
+.readInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    width: 248px;
+    height: 77px;
+    padding: 0;
+}
+.innerBox {
+    width: 116px;
+    height: 77px;
+    margin-left: 4px;
+    margin-right: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #D9D9D9;
+    border-radius: 14px;
+}
+.number {
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 9px;
+    margin-bottom: 8px;
+}
+.lang {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 0px;
+    margin-bottom: 9px;
+}
+
+/* 댓글 입력 창 */
+.writeReply {
+    width: 592px;
+    height: 169px;
+    border-radius: 12px;
+    background-color: white;
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+}
+.textInput {
+    width: 544px;
+    height: 94px;
+    border: none;
+}
+.submit {
+    border-radius: 18px;
+    width: 138px;
+    height: 39px;
+    font-size: 16px;
+    color: white;
+    background-color: #ACA0EB;
+    border: none;
+    margin-top: 8px;
+    margin-left: 460px;
+    margin-right: 0px;
+}
+
+/* 더미 댓글들 */
+.replys{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 592px;
+}
+.replyBox {
+    height: 69px;
+    width: 592px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 30px;
+}
+.column {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.replyRead {
+    margin-left: 55px;
+    margin-top: 0px;
+}
+.modifyReply {
+    margin-left: 0px;
+    height: 110px;
+    width: 100%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 10px;
+}
+.modifyBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 592px;
+    margin: 2px;
+}
+.submit2{
+    border-radius: 18px;
+    width: 138px;
+    height: 39px;
+    font-size: 16px;
+    color: white;
+    background-color: #ACA0EB;
+    border: none;
+    margin-top: 8px;
+}

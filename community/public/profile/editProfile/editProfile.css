@@ -1,0 +1,172 @@
+/* 전체 틀 */
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #F4F5F7;
+    width: 100%;
+    height: 100vh;
+}
+
+/* 제목: 아무 말 대잔치 */
+.header {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    width: 1920px;
+}
+.titleTop {
+    font-size: 32px;
+    margin-left: 133px;
+}
+.backBtn {
+    width: 40px;
+    height: 40px;
+    margin-left: 677px;
+    border-radius: 50px;
+    border: none;
+    background-color: #F4F5F7;
+    background-image: url("/assets/images/backBtn.png");
+}
+
+ /* 드롭다운 */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdownBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50px;
+    margin-left: 133px;
+}
+.dropdownContent {
+    display: none;
+    position: absolute;
+    background-color: #D9D9D9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+}
+.dropdownContent a {
+    float: none;
+    color: black;
+    background-color: #D9D9D9;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+.dropdownContent a:hover {
+    background-color: lightslategray;
+}
+.dropdown:hover .dropdownContent {
+    display: block;
+}
+.dropdown:hover .dropdownBtn {
+    background-color: #ACA0EB;
+}
+
+
+/* 경계선 */
+.lineWhole {
+    width: 100%;
+    height: 1px;
+    background-color: black;
+}
+
+/* 하단부 */
+.footer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 1920px;
+    height: 976px;
+}
+
+.titleBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 161px;
+}
+
+.title {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 0px;
+}
+
+.inputBox {
+    display: flex;
+    flex-direction: column;
+    width: 354px;
+    margin-top: 18px;
+    padding: 0px
+}
+
+.inputText {
+    font-size: 15px;
+    margin-left: 0px;
+    font-weight: bold;
+    margin-bottom: 1px;
+}
+
+.imageInput {
+    width: 149px;
+    height: 149px;
+    border-radius: 50%;
+    margin-left: 103px;
+}
+.image{
+    width: 149px;
+    height: 149px;
+    border-radius: 50%;
+}
+.fixedText {}
+
+.textInput {
+    height: 33px;
+    border-radius: 5px;
+    border: solid;
+    border-width: 1px;
+    margin-top: 4px;
+}
+
+.helperText {
+    color: red;
+    font-size: 12px;
+    margin-top: 1px;
+}
+
+.modify {
+    height: 33px;
+    border: none;
+    background-color: #ACA0EB;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+}
+
+.delete {
+    margin-top: 12px;
+    margin-left: 145px;
+}
+
+.save {
+    opacity: 0;
+    width: 102px;
+    height: 46px;
+    margin-top: 80px;
+    border: none;
+    background-color: #ACA0EB;
+    border-radius: 25px;
+    color: white;
+    font-size: 18px;
+}
+.save.active {
+    opacity: 100%;
+}
