@@ -1,4 +1,5 @@
 import { getCookie, deleteCookie } from "../../utils/cookie.js";
+import {API} from "../../config.js";
 
 checkAuth();
 function checkAuth() {
@@ -56,7 +57,7 @@ async function getPosts() {
 }
 
 async function getData() {
-    let response = await fetch("http://125.130.247.176:9001/posts",{
+    let response = await fetch(`${API.posts}`,{
         method: "GET",
         headers: {
             "Content-Type": 'application/json'

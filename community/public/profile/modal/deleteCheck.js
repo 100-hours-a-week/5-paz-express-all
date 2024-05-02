@@ -1,4 +1,5 @@
 import {deleteCookie, getCookie} from "../../utils/cookie.js";
+import {API} from "../../config.js";
 
 checkAuth();
 function checkAuth() {
@@ -15,7 +16,7 @@ window.cancel = function cancel() {
 
 window.deleteAccount = async function deleteAccount() {
     const id = getCookie("id");
-    const response = await fetch(`http://125.130.247.176:9001/users/${id}`,{
+    const response = await fetch(`${API.users}/${id}`,{
         method: "DELETE",
         header: {
             "Content-Type": "application/json"

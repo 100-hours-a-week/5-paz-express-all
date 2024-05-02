@@ -1,4 +1,5 @@
 import {getCookie, setCookie, deleteCookie} from '../../utils/cookie.js';
+import {API} from "../../config.js";
 
 checkAuth();
 
@@ -17,7 +18,7 @@ async function setInfo() {
     const id = getCookie("id");
     const cookie_image = getCookie("image_path");
 
-    const response = await fetch(`http://125.130.247.176:9001/users/${id}`,{
+    const response = await fetch(`${API.users}/${id}`,{
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -38,9 +39,9 @@ async function setInfo() {
 
 window.modify = async function modify() {
     let nickname = await nicknameChk();
-    let id = 1;
+    let id = getCookie("id");
     const params = JSON.stringify({ "profile_image": image_path, "nickname": nickname });
-    let response = await fetch(`http://125.130.247.176:9001/users/${id}`, {
+    let response = await fetch(`${API.users}/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -53,10 +54,12 @@ window.modify = async function modify() {
         setTimeout(function () {
             toast.classList.remove("active");
         }, 1000);
-        if(path){
+        console.log(image_path, typeof(image_path))
+        if(image_path !== "" && image_path !== null){
             setCookie("image_path", image_path);
+            document.getElementsByClassName("dropdownBtn")[0].src = image_path;
         }
-        document.getElementsByClassName("dropdownBtn")[0].src = image_path;
+        
     }
     else if(response.status == 404){
         alert("유저가 없습니다.");
@@ -126,7 +129,7 @@ window.nicknameChk = async function nicknameChk() {
     async function isDuplicated(input) {
 
         // fetch: 백엔드 서버로 닉네임 중복검사 진행
-        const response = await fetch(`http://125.130.247.176:9001/users/nickname?nickname=${input}`, {
+        const response = await fetch(`${API.nicknameChk}?nickname=${input}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"

@@ -1,4 +1,5 @@
 import { setCookie } from "../utils/cookie.js";
+import {API} from "../config.js";
 
 window.login = async function login() {
     // 입력칸 데이터 변수에 저장
@@ -7,7 +8,7 @@ window.login = async function login() {
 
     const loginBody = { "email": email, "password": password };
 
-    const response = await fetch('http://125.130.247.176:9001/users/login', {
+    const response = await fetch(`${API.login}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -16,7 +17,6 @@ window.login = async function login() {
     })
     const result = await response.json();
     if (response.status == 200) {
-        console.log(result.data.id, result.data.profile_image_path)
         setCookie("id", result.data.id);
         setCookie("image_path", result.data.profile_image_path);
         success();

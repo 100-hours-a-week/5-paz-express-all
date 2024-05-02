@@ -1,4 +1,5 @@
 import {getCookie, deleteCookie} from "../../utils/cookie.js";
+import {API} from "../../config.js";
 let image_path="";
 
 checkAuth();
@@ -67,7 +68,7 @@ window.post = async function post() {
 
     
     let params = {"userId": user_id, "title": title, "content": content, "post_image_path": image_path};
-    let response = await fetch("http://125.130.247.176:9001/posts",{
+    let response = await fetch(`${API.posts}`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json"

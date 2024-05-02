@@ -1,3 +1,5 @@
+import {API} from "../config.js";
+
 let image_path = "";
 let img_isValid = false;
 let email_isValid = false;
@@ -5,7 +7,7 @@ let password_isValid = false;
 let nickname_isValid = false;
 let allChecked = false;
 
-async function uploadImage() {
+window.uploadImage = async function uploadImage() {
     const selectedFile = document.getElementById("uploadImage").files[0];
 
     // 선택된 파일의 여부에 따라 <원상복구> or <이미지 업로드 & 프리뷰>
@@ -46,7 +48,7 @@ async function uploadImage() {
 
 }
 
-async function emailChk() {
+window.emailChk = async function emailChk() {
 
     let emailInput = document.getElementById("email").value;
     let helper = document.getElementsByClassName("emailHelper")[0];
@@ -80,7 +82,7 @@ async function emailChk() {
     // 이메일 중복 검사
     async function isDuplicated(input) {
         // fetch
-        const response = await fetch(`http://125.130.247.176:9001/users/email?email=${input}`, {
+        const response = await fetch(`${API.emailChk}?email=${input}`, {
             method: "GET",
             header: {
                 "Context-Type": "application/json"
@@ -97,7 +99,7 @@ async function emailChk() {
 
 }
 
-function passwordChk() {
+window.passwordChk = function passwordChk() {
     let pw = document.getElementById("password").value;
     let pwHelper = document.getElementsByClassName("passwordHelper")[0];
     let re_pw = document.getElementById("passwordChk").value;
@@ -146,7 +148,7 @@ function passwordChk() {
 }
 
 
-async function nicknameChk() {
+window.nicknameChk = async function nicknameChk() {
     let nickname = document.getElementById("nickname").value;
     let nickHelper = document.getElementsByClassName("nicknameHelper")[0];
     let duplChk = await isDuplicated(nickname);
@@ -185,7 +187,7 @@ async function nicknameChk() {
     }
     // 닉네임 중복 검사
     async function isDuplicated(input) {
-        const response = await fetch(`http://125.130.247.176:9001/users/nickname?nickname=${input}`, {
+        const response = await fetch(`${API.nicknameChk}?nickname=${input}`, {
             method: "GET",
             headers: {
                 "Context-Type": "application/json"
@@ -214,7 +216,7 @@ function checkRegister() {
     }
 }
 
-async function register() {
+window.register = async function register() {
     if (allChecked) {
         //회원가입
         let email = document.getElementById("email").value;
@@ -229,7 +231,7 @@ async function register() {
         })
 
         // fetch: 회원가입 API post
-        const response = await fetch("http://125.130.247.176:9001/users", {
+        const response = await fetch(`${API.users}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

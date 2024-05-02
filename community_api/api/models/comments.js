@@ -4,7 +4,7 @@ const member_db = require('../db/member.json')
 const { getTime } = require('../utils/util.js');
 
 module.exports = {
-    readAllComments: (postId, data) => {
+    readAllComments: (postId) => {
         const comments = db.filter(comment => comment.postId == postId && comment.deleted_at == null);
         try{
             comments.forEach(comment => {

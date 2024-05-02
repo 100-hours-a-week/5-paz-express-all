@@ -76,9 +76,11 @@ app.post('/upload', (req, res) => {
 	// 변수명을 시간으로 하여금 저장
 	let uploadFile = req.files.file;
 	let uploadFileName = req.files.file.name;
-	const uploadPath = "/assets/files/"+time+uploadFileName;
+	const name = uploadFileName.replace(/\s+/g,"_");
+	console.log(name)
+	const uploadPath = "/assets/files/"+time+name;
 	uploadFile.mv(
-		`${__dirname}/public/assets/files/${time}${uploadFileName}`,
+		`${__dirname}/public/assets/files/${time}${name}`,
 		async function (err) {
 			if (err) {
 				return res.status(500).send(err);

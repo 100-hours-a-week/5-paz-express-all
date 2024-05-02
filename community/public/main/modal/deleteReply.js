@@ -1,4 +1,5 @@
 import { getCookie } from "../../utils/cookie.js";
+import {API} from "../../config.js";
 
 checkAuth();
 function checkAuth() {
@@ -12,7 +13,7 @@ function checkAuth() {
 window.deleteReply = async function deleteReply() {
     console.log("hello")
     const commentId = window.location.pathname.split('/')[3];
-    let response = await fetch(`http://125.130.247.176:9001/comments/${commentId}`, {
+    let response = await fetch(`${API.comments}/${commentId}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"

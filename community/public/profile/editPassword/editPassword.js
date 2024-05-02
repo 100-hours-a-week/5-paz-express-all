@@ -1,4 +1,5 @@
 import {getCookie, deleteCookie} from "../../utils/cookie.js";
+import {API} from "../../config.js";
 
 checkAuth();
 function checkAuth() {
@@ -23,7 +24,7 @@ window.save = async function save() {
     const id = getCookie("id");
     if (state) {
         const params = JSON.stringify({ "password": password });
-        let response = await fetch(`http://125.130.247.176:9001/users/${id}`, {
+        let response = await fetch(`${API.users}/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"

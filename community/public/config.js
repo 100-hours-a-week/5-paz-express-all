@@ -1,6 +1,6 @@
 const baseUrl = "http://125.130.247.176:9001";
 
-exports const API = {
+export const API = {
     // user 관련 api
     login: `${baseUrl}/users/login`, // 로그인
     users: `${baseUrl}/users`, // 로그아웃, 회원가입, 개인정보 조회/수정, 회원 탈퇴

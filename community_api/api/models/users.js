@@ -74,12 +74,13 @@ module.exports = {
         }
     },
     modifyInfo: (id, data) => {
-        let members = db.find(member => member.id == id);
-        if (members !== undefined && !members.deleted_at) {
+        console.log(id, data)
+        let members = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/member.json', 'utf8'));
+        let member = db.find(member => member.id == id);
+        if (member !== undefined && !member.deleted_at) {
             try {
-                let index = db.findIndex(member => member.id == id);
-                let temp = db.splice(index, 1);
-                console.log(temp)
+                let index = members.findIndex(member => member.id == id);
+                let temp = members.splice(index, 1);
                 if (data.profile_image) {
                     temp[0].profile_image_path = data.profile_image;
                 }
@@ -87,9 +88,8 @@ module.exports = {
                     temp[0].nickname = data.nickname;
                 }
                 temp[0].updated_at = getTime();
-                console.log(temp[0]);
-                db.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(db), 'utf8');
+                members.splice(index, 0, temp[0]);
+                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
                 return 1;
             }
             catch (err) {
@@ -102,15 +102,16 @@ module.exports = {
         }
     },
     changePassword: (id, password) => {
-        let members = db.find(member => member.id == id);
-        if (members !== undefined && !members.deleted_at) {
+        let members = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/member.json', 'utf8'));
+        let member = db.find(member => member.id == id);
+        if (member !== undefined && !member.deleted_at) {
             try {
-                let index = db.findIndex(member => member.id == id);
-                let temp = db.splice(index, 1);
+                let index = members.findIndex(member => member.id == id);
+                let temp = members.splice(index, 1);
                 temp[0].updated_at = getTime();
                 temp[0].password = password;
-                db.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(db), 'utf8');
+                members.splice(index, 0, temp[0]);
+                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
                 return 1;
             }
             catch (err) {
@@ -123,15 +124,16 @@ module.exports = {
         }
     },
     deleteUser: (id) => {
-        let members = db.find(member => member.id == id);
-        if (members !== undefined && !members.deleted_at) {
+        let members = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/member.json', 'utf8'));
+        let member = db.find(member => member.id == id);
+        if (member !== undefined && !member.deleted_at) {
             try {
-                let index = db.findIndex(member => member.id == id);
-                let temp = db.splice(index, 1);
+                let index = members.findIndex(member => member.id == id);
+                let temp = members.splice(index, 1);
                 console.log(temp)
                 temp[0].deleted_at = getTime();
-                db.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(db), 'utf8');
+                members.splice(index, 0, temp[0]);
+                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
 
                 // 연관관계 DB 제거
                 deleteRelative(id, post_db, "post");

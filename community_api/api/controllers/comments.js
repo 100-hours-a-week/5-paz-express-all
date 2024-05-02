@@ -4,7 +4,8 @@ module.exports = {
     // 댓글 조회
     readAllComments: (req, res) => {
         // req.params.postId, req.body
-        const result = model.readAllComments(req.params.postId, req.body);
+        console.log("hello")
+        const result = model.readAllComments(req.params.postId);
         if(result){
             res.status(200).json({
                 "message":"all_comments_read_success",

@@ -1,4 +1,5 @@
 import { getCookie, deleteCookie } from "../../utils/cookie.js";
+import {API} from "../../config.js";
 
 checkAuth();
 function checkAuth() {
@@ -28,7 +29,7 @@ async function setPost() {
 
 // id에 해당하는 json 추출
 async function getData(id) {
-    let response = await fetch(`http://125.130.247.176:9001/posts/${id}`,{
+    let response = await fetch(`${API.posts}/${id}`,{
         method: "GET",
         headers: {
             "Content-Type": "application/json"
@@ -76,7 +77,7 @@ window.edit = async function edit() {
     console.log(image_path)
 
     let params = {"title": title, "content": content, "post_image_path": image_path};
-    let response = await fetch(`http://125.130.247.176:9001/posts/${postId}`,{
+    let response = await fetch(`${API.posts}/${postId}`,{
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"

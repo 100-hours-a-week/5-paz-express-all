@@ -1,9 +1,10 @@
 import { getCookie, deleteCookie } from "../../utils/cookie.js";
+import { API } from "../../config.js";
 
 checkAuth();
 function checkAuth() {
     const id = getCookie("id");
-    if(id == "null" || id == null){
+    if (id == "null" || id == null) {
         alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
         location.replace("/community");
     }
@@ -20,8 +21,9 @@ async function setPost() {
     document.getElementsByClassName("dropdownBtn")[0].src = cookie_image;
 
     // url의 pathname을 '/'단위로 잘라서 id 값만 추출 (https://css-tricks.com/snippets/javascript/get-url-and-url-parts-in-javascript/)
+    console.log("post get")
     const data = await getData(postId);
-    getPost(data);
+    await getPost(data);
 }
 
 // 페이지에 동적으로 요소 생성
@@ -94,15 +96,21 @@ async function getPost(data) {
 
 // id에 해당하는 게시글 본문 & 댓글 요청
 async function getData(id) {
-    let response = await fetch(`http://125.130.247.176:9001/posts/${id}`);
-    let post = await response.json();
-
-    let response2 = await fetch(`http://125.130.247.176:9001/comments/${id}`,{
-        method: "get",
-        headers:{
+    let response2 = await fetch(`${API.comments}/${id}`, {
+        method: "GET",
+        headers: {
             "Content-Type": "application/json"
         }
     });
+
+    let response = await fetch(`${API.posts}/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    let post = await response.json();
     let comments = await response2.json();
 
     let data = {
@@ -155,7 +163,7 @@ window.addComment = async function addComment() {
     }
     else {
         const body = JSON.stringify({ "userId": userId, "comment": state });
-        const response = await fetch(`http://125.130.247.176:9001/comments/${postId}`, {
+        const response = await fetch(`${API.comments}/${postId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -192,7 +200,7 @@ window.modifyComment = async function modifyComment(commentId) {
 
 // comment id로 댓글 조회
 async function getComment(id) {
-    const response = await fetch(`http://125.130.247.176:9001/comments/one/${id}`, {
+    const response = await fetch(`${API.comments}/one/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "applicaion/json"
@@ -214,7 +222,7 @@ async function getComment(id) {
 window.addModifiedComment = async function addModifiedComment(id) {
     let text = document.getElementById(`inputReply${id}`).value;
     let params = JSON.stringify({ "comment": text });
-    const response = await fetch(`http://125.130.247.176:9001/comments/${id}`, {
+    const response = await fetch(`${API.comments}/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"

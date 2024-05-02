@@ -53,7 +53,7 @@ module.exports = {
                 temp[0].hits_count += 1;
                 postsAll.splice(index, 0, temp[0]);
                 fs.writeFileSync('/home/app/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
-
+                
                 // 유저 닉네임 정보 추가
                 const member = member_db.find(member => member.id == temp[0].userId);
                 temp[0].nickname = member.nickname;
@@ -78,7 +78,7 @@ module.exports = {
                 const temp = postsAll.splice(index, 1);
                 if (data.title) {
                     temp[0].title = data.title;
-                }
+                }           
                 if (data.content) {
                     temp[0].content = data.content;
                 }

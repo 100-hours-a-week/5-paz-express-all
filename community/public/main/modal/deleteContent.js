@@ -1,4 +1,5 @@
 import { getCookie } from "../../utils/cookie.js";
+import {API} from "../../config.js";
 
 checkAuth();
 function checkAuth() {
@@ -11,7 +12,7 @@ function checkAuth() {
 
 window.deleteContent = async function deleteContent() {
     const postId = window.location.pathname.split('/')[3];
-    let response = await fetch(`http://125.130.247.176:9001/posts/${postId}`,{
+    let response = await fetch(`${API.posts}/${postId}`,{
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
