@@ -1,35 +1,35 @@
-import {getCookie, setCookie, deleteCookie} from '../../utils/cookie.js';
-
-checkAuth();
-
-function checkAuth() {
-    const id = getCookie("id");
-    if(id == "null" || id == null){
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
+import { getCookie, setCookie, deleteCookie } from '../../utils/cookie.js';
+import { API } from "../../config.js";
 
 let image_path = "";
 // 초기 데이터 로딩
 setInfo();
 async function setInfo() {
-    const id = getCookie("id");
     const cookie_image = getCookie("image_path");
 
-    const response = await fetch(`http://125.130.247.176:9001/users/${id}`,{
+    const response = await fetch(`${API.users}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        credentials: 'include',
     });
-    const data = await response.json();
+    console.log(response.status)
 
 
-    document.getElementsByClassName("dropdownBtn")[0].src = cookie_image;
-    document.getElementsByClassName("image")[0].src = cookie_image;
-    document.getElementsByClassName("fixedText")[0].innerText = data.data.email;
-    document.getElementsByClassName("textInput")[0].value = data.data.nickname;
+    if (response.status == 401) {
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
+    else if (response.status == 200) {
+        const data = await response.json();
+        document.getElementsByClassName("dropdownBtn")[0].src = cookie_image;
+        document.getElementsByClassName("image")[0].src = cookie_image;
+        document.getElementsByClassName("fixedText")[0].innerText = data.data.email;
+        document.getElementsByClassName("textInput")[0].value = data.data.nickname;
+    }else if (response.status == 400) {
+        alert("정보 조회에 실패하였습니다. 새로 고침을 해주세요.");
+    }
 }
 
 // 사용자 정보 수정에 대한 로직
@@ -38,14 +38,14 @@ async function setInfo() {
 
 window.modify = async function modify() {
     let nickname = await nicknameChk();
-    let id = 1;
     const params = JSON.stringify({ "profile_image": image_path, "nickname": nickname });
-    let response = await fetch(`http://125.130.247.176:9001/users/${id}`, {
+    let response = await fetch(`${API.users}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
         },
-        body: params
+        body: params,
+        credentials: 'include',
     })
     if (response.status == 201) {
         let toast = document.getElementById("save");
@@ -53,12 +53,14 @@ window.modify = async function modify() {
         setTimeout(function () {
             toast.classList.remove("active");
         }, 1000);
-        if(path){
+        console.log(image_path, typeof (image_path))
+        if (image_path !== "" && image_path !== null) {
             setCookie("image_path", image_path);
+            document.getElementsByClassName("dropdownBtn")[0].src = image_path;
         }
-        document.getElementsByClassName("dropdownBtn")[0].src = image_path;
+
     }
-    else if(response.status == 404){
+    else if (response.status == 404) {
         alert("유저가 없습니다.");
     }
     else {
@@ -126,7 +128,7 @@ window.nicknameChk = async function nicknameChk() {
     async function isDuplicated(input) {
 
         // fetch: 백엔드 서버로 닉네임 중복검사 진행
-        const response = await fetch(`http://125.130.247.176:9001/users/nickname?nickname=${input}`, {
+        const response = await fetch(`${API.nicknameChk}?nickname=${input}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"

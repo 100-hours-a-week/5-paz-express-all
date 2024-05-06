@@ -1,19 +1,8 @@
 import { getCookie, deleteCookie } from "../../utils/cookie.js";
-
-checkAuth();
-function checkAuth() {
-    const id = getCookie("id");
-    console.log(id, typeof(id))
-    if(id == "null" || id == null){
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
+import { API } from "../../config.js";
 
 setInfo();
 getPosts();
-
-
 
 async function setInfo() {
     const data = getCookie("image_path");
@@ -56,36 +45,57 @@ async function getPosts() {
 }
 
 async function getData() {
-    let response = await fetch("http://125.130.247.176:9001/posts",{
+    let response = await fetch(`${API.posts}`, {
         method: "GET",
         headers: {
             "Content-Type": 'application/json'
-        }
+        },
+        credentials: 'include',
     })
-    let data = await response.json();
-   
-    return data.data;
+
+    if(response.status == 401){
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
+    else if(response.status == 200) {
+        let data = await response.json();
+        return data.data;
+    }
+    else if(response.status == 400){
+        alert("게시글 조회에 실패하였습니다, 새로고침을 해주세요.");
+    }
+
 }
 
 function convert_num(input) {
     console.log(input)
-    if(input >= 1000 && input<10000){
+    if (input >= 1000 && input < 10000) {
         return "1k";
     }
-    else if(input >= 10000 && input < 100000){
+    else if (input >= 10000 && input < 100000) {
         return "10k";
     }
-    else if(input > 100000){
+    else if (input > 100000) {
         return "100k";
     }
-    else{
+    else {
         return input;
     }
 }
 
-window.logout = function logout() {
-    deleteCookie();
-    location.href = "/community";
+window.logout = async function logout() {
+    const response = await fetch(`${API.logout}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": 'application/json'
+        },
+        credentials: 'include',
+    })
+
+    if (response.status == 200) {
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
 }
 
 /*

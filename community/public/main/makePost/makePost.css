@@ -139,6 +139,7 @@
     border-radius: 15px;
     border-color: lightgrey;
     border: 0;
+    resize: none;
 }
 .helperText {
     font-size: 14px;

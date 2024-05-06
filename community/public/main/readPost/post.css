@@ -124,7 +124,6 @@
     flex-direction: row;
     align-items: center;
     margin-bottom: 10px;
-    width: 544px;
 }
 
 .icon {
@@ -138,11 +137,13 @@
     font-size: 15px;
     margin-bottom: 13px;
     font-weight: bold;
+    width: 150px;
 }
 
 .contentInfoTime {
     font-size: 14px;
     margin-left: 10px;
+    width: 150px
 }
 
 .buttonBox {
@@ -150,7 +151,7 @@
     flex-direction: row;
     width: 108px;
     height: 27px;
-    margin-left: 200px;
+    margin-left: 100px;
 }
 
 .button {
@@ -237,6 +238,7 @@
     width: 544px;
     height: 94px;
     border: none;
+    resize: none;
 }
 .submit {
     border-radius: 18px;
@@ -291,6 +293,7 @@
     padding: 15px;
     border-radius: 12px;
     margin-top: 10px;
+    resize: none;
 }
 .modifyBox {
     display: flex;

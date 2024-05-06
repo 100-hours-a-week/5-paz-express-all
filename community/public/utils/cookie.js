@@ -6,6 +6,5 @@ export function getCookie(key) {
     return match ? match.pop() : null;
 }
 export function deleteCookie() {
-    document.cookie = `id=null; path=/; max-age="0"`;
     document.cookie = `image_path=null; path=/; max-age="0"`;
 }

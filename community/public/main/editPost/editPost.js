@@ -1,13 +1,5 @@
 import { getCookie, deleteCookie } from "../../utils/cookie.js";
-
-checkAuth();
-function checkAuth() {
-    const id = getCookie("id");
-    if(id == "null" || id == null){
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
+import { API } from "../../config.js";
 
 let image_path = "";
 const postId = window.location.pathname.split('/')[3];
@@ -28,14 +20,26 @@ async function setPost() {
 
 // id에 해당하는 json 추출
 async function getData(id) {
-    let response = await fetch(`http://125.130.247.176:9001/posts/${id}`,{
+    let response = await fetch(`${API.posts}/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        credentials: 'include',
     });
-    let dataAll = await response.json();
-    return dataAll.data;
+
+    if (response.status == 401) {
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
+    else if (response.status == 200) {
+        let dataAll = await response.json();
+        return dataAll.data;
+    }
+    else if (response.status == 400) {
+        alert("게시글 정보 조회에 실패하였습니다.");
+    }
+
 }
 
 // 이미지 업로드
@@ -75,25 +79,30 @@ window.edit = async function edit() {
     console.log(content)
     console.log(image_path)
 
-    let params = {"title": title, "content": content, "post_image_path": image_path};
-    let response = await fetch(`http://125.130.247.176:9001/posts/${postId}`,{
+    let params = { "title": title, "content": content, "post_image_path": image_path };
+    let response = await fetch(`${API.posts}/${postId}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(params)
+        body: JSON.stringify(params),
+        credentials: 'include',
     })
-    if(response.status == 201){
+    if (response.status == 401) {
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
+    else if (response.status == 201) {
         alert("수정이 완료되었습니다.");
         history.back();
     }
-    else if(response.status == 404){
+    else if (response.status == 404) {
         alert("게시글을 찾을 수가 없습니다.");
     }
-    else if(response.status == 400){
+    else if (response.status == 400) {
         alert("게시글 수정에 실패하였습니다");
     }
-    
+
 }
 
 window.chk = function chk() {

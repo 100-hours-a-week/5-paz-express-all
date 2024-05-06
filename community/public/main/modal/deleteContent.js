@@ -1,23 +1,19 @@
-import { getCookie } from "../../utils/cookie.js";
-
-checkAuth();
-function checkAuth() {
-    const id = getCookie("id");
-    if(id == "null" || id == null){
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
+import {API} from "../../config.js";
 
 window.deleteContent = async function deleteContent() {
     const postId = window.location.pathname.split('/')[3];
-    let response = await fetch(`http://125.130.247.176:9001/posts/${postId}`,{
+    let response = await fetch(`${API.posts}/${postId}`,{
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        credentials: 'include',
     })
-    if(response.status == 200){
+    if(response.status == 401){
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
+    else if(response.status == 200){
         alert("게시글을 성공적으로 삭제하였습니다.");
         location.replace("/community/main");
     }

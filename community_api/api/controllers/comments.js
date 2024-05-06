@@ -3,8 +3,11 @@ const model = require('../models/comments.js');
 module.exports = {
     // 댓글 조회
     readAllComments: (req, res) => {
-        // req.params.postId, req.body
-        const result = model.readAllComments(req.params.postId, req.body);
+        // 권한 체크
+        if (req.session.user == undefined){
+            res.status(401).json({"message": "unauthorized"});
+        }
+        const result = model.readAllComments(req.params.postId);
         if(result){
             res.status(200).json({
                 "message":"all_comments_read_success",
@@ -20,8 +23,12 @@ module.exports = {
     },
     // 댓글 작성
     makeComment: (req, res) => {
+        // 권한 체크
+        if (req.session.user == undefined){
+            res.status(401).json({"message": "unauthorized"});
+        }
         // req.params.postId, req.body
-        const result = model.makeComment(req.params.postId, req.body);
+        const result = model.makeComment(req.params.postId, req.session.user.id, req.body);
         if(result == 1){
             res.status(201).json({"message":"comment_add_success"});
         }
@@ -49,6 +56,10 @@ module.exports = {
     },
     // 댓글 수정
     modifyComment: (req, res) => {
+        // 권한 체크
+        if (req.session.user == undefined){
+            res.status(401).json({"message": "unauthorized"});
+        }
         // req.params.commentId, req.body
         const result = model.modifyComment(req.params.commentId, req.body);
         if(result == 1){
@@ -63,6 +74,10 @@ module.exports = {
     },
     // 댓글 삭제
     deleteComment: (req, res) => {
+        // 권한 체크
+        if (req.session.user == undefined){
+            res.status(401).json({"message": "unauthorized"});
+        }
         // req.params.commentId
         const result = model.deleteComment(req.params.commentId);
         if(result == 1){

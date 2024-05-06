@@ -4,10 +4,14 @@ module.exports = {
     // 로그인
     login: (req, res) => {
         const result = model.login(req.body);
-        if(result == -1){
+        if (result == -1) {
             res.status(404).json({ "message": "user_not_found" });
         }
         else if (result) {
+            req.session.user = {
+                id: result.id
+            };
+
             res.status(200).json({
                 "message": "login_success",
                 "data": {
@@ -22,8 +26,11 @@ module.exports = {
     },
     // 로그아웃
     logout: (req, res) => {
-        console.log("logout id: " + req.params.userId);
-        res.status(200).json("this is logout");
+        if (req.session.user == undefined) {
+            res.status(401).json({ "message": "Unauthorized" });
+        }
+        req.session.destroy();
+        res.status(200).json({ "message": "logout_success" });
     },
     // 회원가입
     signin: (req, res) => {
@@ -58,20 +65,30 @@ module.exports = {
     },
     // id로 정보 조회
     getInfo: (req, res) => {
-        const result = model.readInfo(req.params.userId);
-        if (result) {
-            res.status(200).json({
-                "message":"user_info_read_success",
-                "data": result
-            });
+        // 권한 체크
+        if (req.session.user == undefined) {
+            res.status(401).json({ "message": "unauthorized" });
         }
         else {
-            res.status(404).json({ "message": "user_not_found" });
+            const result = model.readInfo(req.session.user.id);
+            if (result) {
+                res.status(200).json({
+                    "message": "user_info_read_success",
+                    "data": result
+                });
+            }
+            else {
+                res.status(404).json({ "message": "user_not_found" });
+            }
         }
     },
     // id 기준 정보 수정
     modifyInfo: (req, res) => {
-        const result = model.modifyInfo(req.params.userId, req.body);
+        // 권한 체크
+        if (req.session.user == undefined) {
+            res.status(401).json({ "message": "unauthorized" });
+        }
+        const result = model.modifyInfo(req.session.user.id, req.body);
         if (result == 1) {
             res.status(201).json({ "message": "user_info_modify_success" });
         }
@@ -84,7 +101,11 @@ module.exports = {
     },
     // id 기준 비밀번호 수정
     changePassword: (req, res) => {
-        const result = model.changePassword(req.params.userId, req.body.password);
+        // 권한 체크
+        if (req.session.user == undefined) {
+            res.status(401).json({ "message": "unauthorized" });
+        }
+        const result = model.changePassword(req.session.user.id, req.body.password);
         if (result == 1) {
             res.status(200).json({ "message": "user_password_change_success" });
         }
@@ -97,9 +118,13 @@ module.exports = {
     },
     // 유저 삭제
     deleteUser: (req, res) => {
-        const result = model.deleteUser(req.params.userId);
+        // 권한 체크
+        if (req.session.user == undefined) {
+            res.status(401).json({ "message": "unauthorized" });
+        }
+        const result = model.deleteUser(req.session.user.id);
         if (result == 1) {
-            res.status(200).json({ "message": `${req.params.userId} id deleted.` });
+            res.status(200).json({ "message": `${req.session.user.id} id deleted.` });
         }
         else if (result == -1) {
             res.status(404).json({ "message": "user_not_found" });

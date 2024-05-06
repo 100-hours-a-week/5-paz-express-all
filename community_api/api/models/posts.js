@@ -6,14 +6,14 @@ const { getTime } = require('../utils/util');
 
 module.exports = {
     getAllPosts: async() => {
-        const posts = db.filter(post => post.deleted_at == null);
+        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
+        const posts = postsAll.filter(post => post.deleted_at == null);
         try{
             posts.forEach(post => {
                 const member = member_db.find(member => member.id == post.userId);
                 post.nickname = member.nickname;
                 post.profile_image_path = member.profile_image_path;
             });
-            console.log(posts);
             return posts;
             
         }
@@ -22,20 +22,20 @@ module.exports = {
             return 0;
         }
     },
-    makePost: (data) => {
-        let posts = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/post.json', 'utf8'));
+    makePost: (userId, data) => {
+        let posts = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
         try {
             data.created_at = getTime();
             data.updated_at = getTime();
             data.deleted_at = null;
+            data.userId = userId;
             data.id = posts.length + 1;
             data.like_count = 0;
             data.hits_count = 0;
             data.replys_count = 0
-            console.log(data)
             // db는 전역변수 생길 수 있는 문제를 고민해볼것.
             posts.push(data);
-            fs.writeFileSync('/home/app/community_api/api/db/post.json', JSON.stringify(posts), 'utf8');
+            fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(posts), 'utf8');
             return 1;
         }
         catch (err) {
@@ -43,7 +43,7 @@ module.exports = {
         }
     },
     readPost: (id) => {
-        let postsAll = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/post.json', 'utf8'));
+        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
         const posts = postsAll.find(post => post.id == id);
         if (posts !== undefined && !posts.deleted_at) {
             try {
@@ -52,8 +52,8 @@ module.exports = {
                 temp[0].replys_count = getReplyCount(id);
                 temp[0].hits_count += 1;
                 postsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
-
+                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
+                
                 // 유저 닉네임 정보 추가
                 const member = member_db.find(member => member.id == temp[0].userId);
                 temp[0].nickname = member.nickname;
@@ -70,7 +70,7 @@ module.exports = {
         }
     },
     editPost: (id, data) => {
-        let postsAll = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/post.json', 'utf8'));
+        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
         const posts = postsAll.find(post => post.id == id);
         if (posts !== undefined && !posts.deleted_at) {
             try {
@@ -78,7 +78,7 @@ module.exports = {
                 const temp = postsAll.splice(index, 1);
                 if (data.title) {
                     temp[0].title = data.title;
-                }
+                }           
                 if (data.content) {
                     temp[0].content = data.content;
                 }
@@ -87,7 +87,7 @@ module.exports = {
                 }
                 temp[0].updated_at = getTime();
                 postsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
+                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
                 return 1;
             }
             catch (err) {
@@ -100,7 +100,7 @@ module.exports = {
         }
     },
     deletePost: (id) => {
-        let postsAll = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/post.json', 'utf8'));
+        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
         const posts = postsAll.find(post => post.id == id);
         if (posts !== undefined && !posts.deleted_at) {
             try {
@@ -108,7 +108,7 @@ module.exports = {
                 const temp = postsAll.splice(index, 1);
                 temp[0].deleted_at = getTime();
                 postsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
+                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
                 return 1;
             }
             catch (err) {
@@ -123,6 +123,8 @@ module.exports = {
 }
 
 function getReplyCount(postId){
-    const comments = comment_db.filter(comment => comment.postId == postId && comment.deleted_at == null);
+    let commentsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', 'utf8'));
+    const comments = commentsAll.filter(comment => comment.postId == postId && comment.deleted_at == null);
+    console.log(comments.length)
     return comments.length;
 }
