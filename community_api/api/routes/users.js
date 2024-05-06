@@ -7,7 +7,7 @@ const {login, logout, signin, emailChk,
 
 router.post('/login', login);
 
-router.post('/:userId/logout', logout);
+router.post('/logout', logout);
 
 router.post('/', signin);
 
@@ -15,11 +15,11 @@ router.get('/email', emailChk);
 
 router.get('/nickname', nicknameChk);
 
-router.get('/:userId', getInfo);
+router.get('/', getInfo);
 
-router.patch('/:userId', modifyInfo);
+router.patch('/', modifyInfo);
 
-router.put('/:userId', changePassword);
+router.put('/', changePassword);
 
 router.delete('/:userId', deleteUser);
 

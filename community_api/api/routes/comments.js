@@ -5,12 +5,12 @@ const {readAllComments, makeComment, readComment, modifyComment, deleteComment} 
 
 router.get('/:postId', readAllComments);
 
-router.post('/:postId', makeComment);
+router.post('/:postId', makeComment);  //req.session.user.id
 
-router.get('/one/:commentId', readComment)
+router.get('/one/:commentId', readComment) 
 
-router.put('/:commentId', modifyComment);
+router.put('/:commentId', modifyComment); //req.session.user.id
 
-router.delete('/:commentId', deleteComment);
+router.delete('/:commentId', deleteComment); // req.session.user.id
 
 module.exports = router;

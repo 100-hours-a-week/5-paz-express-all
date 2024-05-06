@@ -1,22 +1,12 @@
-import {deleteCookie, getCookie} from "../../utils/cookie.js";
+import {deleteCookie} from "../../utils/cookie.js";
 import {API} from "../../config.js";
-
-checkAuth();
-function checkAuth() {
-    const id = getCookie("id");
-    if(id == "null" || id == null){
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
 
 window.cancel = function cancel() {
     history.back();
 }
 
 window.deleteAccount = async function deleteAccount() {
-    const id = getCookie("id");
-    const response = await fetch(`${API.users}/${id}`,{
+    const response = await fetch(`${API.users}`,{
         method: "DELETE",
         header: {
             "Content-Type": "application/json"

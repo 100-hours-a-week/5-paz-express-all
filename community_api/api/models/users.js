@@ -23,7 +23,7 @@ module.exports = {
     // 회원가입
     signin: (info) => {
         try {
-            let member = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/member.json', 'utf8'));
+            let member = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', 'utf8'));
             const time = getTime();
             info.id = member.length + 1;
             info.created_at = time;
@@ -31,7 +31,7 @@ module.exports = {
             info.deleted_at = null;
             console.log(info)
             member.push(info);
-            fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(member), 'utf8');
+            fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', JSON.stringify(member), 'utf8');
             return true;
         } catch (err) {
             console.log(`error occured in users_model_signin: ${err}`)
@@ -75,7 +75,7 @@ module.exports = {
     },
     modifyInfo: (id, data) => {
         console.log(id, data)
-        let members = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/member.json', 'utf8'));
+        let members = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', 'utf8'));
         let member = db.find(member => member.id == id);
         if (member !== undefined && !member.deleted_at) {
             try {
@@ -89,7 +89,7 @@ module.exports = {
                 }
                 temp[0].updated_at = getTime();
                 members.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
+                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
                 return 1;
             }
             catch (err) {
@@ -102,7 +102,7 @@ module.exports = {
         }
     },
     changePassword: (id, password) => {
-        let members = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/member.json', 'utf8'));
+        let members = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', 'utf8'));
         let member = db.find(member => member.id == id);
         if (member !== undefined && !member.deleted_at) {
             try {
@@ -111,7 +111,7 @@ module.exports = {
                 temp[0].updated_at = getTime();
                 temp[0].password = password;
                 members.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
+                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
                 return 1;
             }
             catch (err) {
@@ -124,7 +124,7 @@ module.exports = {
         }
     },
     deleteUser: (id) => {
-        let members = JSON.parse(fs.readFileSync('/home/app/community_api/api/db/member.json', 'utf8'));
+        let members = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', 'utf8'));
         let member = db.find(member => member.id == id);
         if (member !== undefined && !member.deleted_at) {
             try {
@@ -133,7 +133,7 @@ module.exports = {
                 console.log(temp)
                 temp[0].deleted_at = getTime();
                 members.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
+                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/member.json', JSON.stringify(members), 'utf8');
 
                 // 연관관계 DB 제거
                 deleteRelative(id, post_db, "post");
@@ -165,6 +165,6 @@ function deleteRelative(id, dbR, name) {
         let tmp = dbR.splice(index, 1);
         tmp[0].deleted_at = getTime();
         dbR.splice(index, 0 ,tmp[0]);
-        fs.writeFileSync(`/home/app/community_api/api/db/${name}.json`, JSON.stringify(dbR),'utf8');
+        fs.writeFileSync(`/home/app/5-paz-express-all/community_api/api/db/${name}.json`, JSON.stringify(dbR),'utf8');
     })
 }

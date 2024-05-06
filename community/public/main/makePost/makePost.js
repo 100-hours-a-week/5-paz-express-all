@@ -2,15 +2,6 @@ import {getCookie, deleteCookie} from "../../utils/cookie.js";
 import {API} from "../../config.js";
 let image_path="";
 
-checkAuth();
-function checkAuth() {
-    const id = getCookie("id");
-    if(id == "null" || id == null){
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
-
 setInfo();
 
 async function setInfo() {
@@ -61,21 +52,25 @@ window.chk = function chk(){
 window.post = async function post() {
     let title = document.getElementById("title").value;
     let content = document.getElementById("content").value;
-    const user_id = getCookie("id");
     console.log(title)
     console.log(content)
     console.log(image_path)
 
     
-    let params = {"userId": user_id, "title": title, "content": content, "post_image_path": image_path};
+    let params = {"title": title, "content": content, "post_image_path": image_path};
     let response = await fetch(`${API.posts}`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(params)
+        body: JSON.stringify(params),
+        credentials: 'include',
     })
-    if(response.status == 201){
+    if(response.status == 401){
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
+    else if(response.status == 201){
         alert("게시글 작성이 완료되었습니다");
         history.back();
     }

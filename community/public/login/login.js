@@ -13,11 +13,11 @@ window.login = async function login() {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(loginBody)
+        body: JSON.stringify(loginBody),
+        credentials: 'include',
     })
     const result = await response.json();
     if (response.status == 200) {
-        setCookie("id", result.data.id);
         setCookie("image_path", result.data.profile_image_path);
         success();
     }
@@ -42,6 +42,6 @@ function success() {
     let text = document.getElementsByClassName("helperText")[0];
     text.innerText = "*로그인 성공. 3초 후 메인화면으로 이동합니다."
     setTimeout(function () {
-        location.replace("/community/main");
+        location.href="/community/main";
     }, 300);
 }

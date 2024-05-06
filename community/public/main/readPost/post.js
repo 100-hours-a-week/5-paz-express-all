@@ -1,15 +1,6 @@
 import { getCookie, deleteCookie } from "../../utils/cookie.js";
 import { API } from "../../config.js";
 
-checkAuth();
-function checkAuth() {
-    const id = getCookie("id");
-    if (id == "null" || id == null) {
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
-
 // url의 pathname을 '/'단위로 잘라서 id 값만 추출 (https://css-tricks.com/snippets/javascript/get-url-and-url-parts-in-javascript/)
 const postId = window.location.pathname.split('/')[3];
 setPost();
@@ -100,24 +91,39 @@ async function getData(id) {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        credentials: 'include',
     });
+    if (response2.status == 401) {
+        deleteCookie("image_path");
+        location.replace("/community");
+    }
 
     let response = await fetch(`${API.posts}/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+        credentials: 'include',
     });
-
-    let post = await response.json();
-    let comments = await response2.json();
-
-    let data = {
-        "post": post.data,
-        "comment": comments.data
+    if(response.status == 401){
+        deleteCookie("image_path");
+        location.replace("/community");
     }
-    return data;
+    
+    if (response.status == 200 && response.status == 200) {
+        let post = await response.json();
+        let comments = await response2.json();
+
+        let data = {
+            "post": post.data,
+            "comment": comments.data
+        }
+        return data;
+    }
+    else {
+        alert("데이터 조회에 실패하였습니다. 새로고침을 해주세요.");
+    }
 }
 
 
@@ -157,21 +163,24 @@ window.replyChk = function replyChk() {
 // 댓글 입력 수행
 window.addComment = async function addComment() {
     const state = replyChk();
-    const userId = getCookie('id');
     if (!state) {
         alert('댓글을 입력해주세요');
     }
     else {
-        const body = JSON.stringify({ "userId": userId, "comment": state });
+        const body = JSON.stringify({ "comment": state });
         const response = await fetch(`${API.comments}/${postId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: body
+            body: body,
+            credentials: 'include',
         });
-        console.log(response.status)
-        if (response.status == 201) {
+        if (response.status == 401) {
+            deleteCookie("image_path");
+            location.replace("/community");
+        }
+        else if (response.status == 201) {
             alert("댓글 작성이 완료되었습니다.");
             window.location.reload();
         }
@@ -204,7 +213,8 @@ async function getComment(id) {
         method: "GET",
         headers: {
             "Content-Type": "applicaion/json"
-        }
+        },
+        credentials: 'include',
     });
     const result = await response.json();
     if (response.status == 200) {
@@ -227,7 +237,8 @@ window.addModifiedComment = async function addModifiedComment(id) {
         headers: {
             "Content-Type": "application/json"
         },
-        body: params
+        body: params,
+        credentials: 'include',
     })
     if (response.status == 201) {
         alert("댓글 수정을 성공적으로 완료하였습니다.");

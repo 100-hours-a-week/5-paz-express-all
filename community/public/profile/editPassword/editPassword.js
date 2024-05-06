@@ -1,15 +1,6 @@
 import {getCookie, deleteCookie} from "../../utils/cookie.js";
 import {API} from "../../config.js";
 
-checkAuth();
-function checkAuth() {
-    const id = getCookie("id");
-    if(id == "null" || id == null){
-        alert("로그인이 풀렸습니다. 다시 로그인 해주세요.");
-        location.replace("/community");
-    }
-}
-
 // 초기 데이터 로딩
 setInfo();
 async function setInfo() {
@@ -21,15 +12,15 @@ async function setInfo() {
 window.save = async function save() {
     let state = passwordChk();
     let password = document.getElementById("password").value;
-    const id = getCookie("id");
     if (state) {
         const params = JSON.stringify({ "password": password });
-        let response = await fetch(`${API.users}/${id}`, {
+        let response = await fetch(`${API.users}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: params
+            body: params,
+            credentials: 'include',
         })
         if (response.status == 200) {
             let toast = document.getElementById("save");
