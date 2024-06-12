@@ -2,12 +2,12 @@ const model = require('../models/comments.js');
 
 module.exports = {
     // 댓글 조회
-    readAllComments: (req, res) => {
+    readAllComments: async (req, res) => {
         // 권한 체크
         if (req.session.user == undefined){
             res.status(401).json({"message": "unauthorized"});
         }
-        const result = model.readAllComments(req.params.postId);
+        const result = await model.readAllComments(req.params.postId);
         if(result){
             res.status(200).json({
                 "message":"all_comments_read_success",
@@ -22,13 +22,13 @@ module.exports = {
         }
     },
     // 댓글 작성
-    makeComment: (req, res) => {
+    makeComment: async (req, res) => {
         // 권한 체크
         if (req.session.user == undefined){
             res.status(401).json({"message": "unauthorized"});
         }
         // req.params.postId, req.body
-        const result = model.makeComment(req.params.postId, req.session.user.id, req.body);
+        const result = await model.makeComment(req.params.postId, req.session.user.id, req.body);
         if(result == 1){
             res.status(201).json({"message":"comment_add_success"});
         }
@@ -39,10 +39,13 @@ module.exports = {
             res.status(400).json({"message":"comment_add_failed"});
         }
     },
-    readComment: (req, res) => {
-        const result = model.readComment(req.params.commentId);
+    readComment: async (req, res) => {
+        const result = await model.readComment(req.session.user.id, req.params.commentId);
         if(result == -1){
             res.status(404).json({"message":"comment_not_found"});
+        }
+        else if(result == -2){
+            res.status(403).json({"message": "permission denied"});
         }
         else if(result){
             res.status(200).json({
@@ -55,15 +58,18 @@ module.exports = {
         }
     },
     // 댓글 수정
-    modifyComment: (req, res) => {
+    modifyComment: async (req, res) => {
         // 권한 체크
         if (req.session.user == undefined){
             res.status(401).json({"message": "unauthorized"});
         }
         // req.params.commentId, req.body
-        const result = model.modifyComment(req.params.commentId, req.body);
+        const result = await model.modifyComment(req.session.user.id, req.params.commentId, req.body);
         if(result == 1){
             res.status(201).json({"message":"comment_modify_success"});
+        }
+        else if(result == -2){
+            res.status(403).json({"message":"permission denied"});
         }
         else if(result == -1){
             res.status(404).json({"message":"comment_not_found"});
@@ -73,15 +79,18 @@ module.exports = {
         }
     },
     // 댓글 삭제
-    deleteComment: (req, res) => {
+    deleteComment: async (req, res) => {
         // 권한 체크
         if (req.session.user == undefined){
             res.status(401).json({"message": "unauthorized"});
         }
         // req.params.commentId
-        const result = model.deleteComment(req.params.commentId);
+        const result = await model.deleteComment(req.session.user.id, req.params.commentId);
         if(result == 1){
             res.status(200).json({"message":"comment_delete_success"});
+        }
+        else if(result == -2){
+            res.status(403).json({"message":"permission denied"});
         }
         else if(result == -1){
             res.status(404).json({"message":"comment_not_found"});

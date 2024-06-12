@@ -16,6 +16,7 @@ async function setPost() {
     document.getElementsByClassName("textInput")[0].value = data.title;
     document.getElementsByClassName("textareaInput")[0].innerText = data.content;
     document.getElementsByClassName("subtext")[0].innerText = data.post_image_path;
+    image_path = data.post_image_path;
 }
 
 // id에 해당하는 json 추출
@@ -94,6 +95,10 @@ window.edit = async function edit() {
     }
     else if (response.status == 201) {
         alert("수정이 완료되었습니다.");
+        history.back();
+    }
+    else if (response.status == 403) {
+        alert("본인이 작성한 글만 수정이 가능합니다.");
         history.back();
     }
     else if (response.status == 404) {

@@ -1,123 +1,138 @@
-const fs = require('fs');
-const db = require('../db/post.json');
-const member_db = require('../db/member.json');
-const comment_db = require('../db/comment.json');
+const dbPool = require("../db/db.config");
 const { getTime } = require('../utils/util');
 
 module.exports = {
     getAllPosts: async() => {
-        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
-        const posts = postsAll.filter(post => post.deleted_at == null);
+        const SQL = `select member.nickname, member.profile_image_path, post.id, post.title, date_format(post.updated_at, "%y-%m-%d %h:%m:%s") as updated_at, post.like_count, post.hits_count, post.replys_count from post join member on post.userId = member.id where member.deleted_at is null and post.deleted_at is null`;
         try{
-            posts.forEach(post => {
-                const member = member_db.find(member => member.id == post.userId);
-                post.nickname = member.nickname;
-                post.profile_image_path = member.profile_image_path;
-            });
-            return posts;
-            
+            let results = await dbPool.query(SQL);
+            return results[0];
         }
         catch(err){
-            console.log(err)
-            return 0;
+            return false;
         }
     },
-    makePost: (userId, data) => {
-        let posts = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
+    makePost: async (userId, data) => {
+        let id;
+        const title = data.title;
+        const content = data.content;
+        const post_image_path = data.post_image_path;
+        const created_at = getTime();
+        const updated_at = getTime();
+        const deleted_at = null;
+        const like_count = 0;
+        const hits_count = 0;
+        const replys_count = 0;
+        try{
+            const SQL = `select count(*) from post`;
+            const results = await dbPool.query(SQL);
+            id = results[0][0]["count(*)"] + 1;
+        }
+        catch(err){
+            console.log(`db error detected in makePost => ${err}`)
+            return 0;
+        }
+        
         try {
-            data.created_at = getTime();
-            data.updated_at = getTime();
-            data.deleted_at = null;
-            data.userId = userId;
-            data.id = posts.length + 1;
-            data.like_count = 0;
-            data.hits_count = 0;
-            data.replys_count = 0
-            // db는 전역변수 생길 수 있는 문제를 고민해볼것.
-            posts.push(data);
-            fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(posts), 'utf8');
+            const SQL = `insert into post values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            const results = await dbPool.query(SQL, [id, userId, title, content, post_image_path, created_at, updated_at, deleted_at, like_count, hits_count, replys_count]);
             return 1;
         }
         catch (err) {
+            console.log(`db error detected in makePost - insert => ${err}`)
             return 0;
         }
     },
-    readPost: (id) => {
-        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
-        const posts = postsAll.find(post => post.id == id);
-        if (posts !== undefined && !posts.deleted_at) {
-            try {
-                const index = postsAll.findIndex(post => post.id == id);
-                const temp = postsAll.splice(index, 1);
-                temp[0].replys_count = getReplyCount(id);
-                temp[0].hits_count += 1;
-                postsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
-                
-                // 유저 닉네임 정보 추가
-                const member = member_db.find(member => member.id == temp[0].userId);
-                temp[0].nickname = member.nickname;
-                temp[0].profile_image_path = member.profile_image_path;
-                return temp[0];
+    readPost: async (id) => {
+        let hits_count;
+        try{ // id에 해당하는 게시글의 삭제 여부를 선확인.
+            const SQL = `select count(*), hits_count from post where id = ? and deleted_at is null`;
+            const results = await dbPool.query(SQL, [id]);
+            const result = results[0][0];
+            if (result["count(*)"] == 0){
+                return -1;
             }
-            catch (err) {
-                console.log(err)
-                return 0;
-            }
+            hits_count = result["hits_count"] + 1;
         }
-        else {
-            return -1;
+        catch(err){
+            console.log(`db error detected in readPost alive check => ${err}`)
+            return 0;
         }
-    },
-    editPost: (id, data) => {
-        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
-        const posts = postsAll.find(post => post.id == id);
-        if (posts !== undefined && !posts.deleted_at) {
-            try {
-                const index = postsAll.findIndex(post => post.id == id);
-                const temp = postsAll.splice(index, 1);
-                if (data.title) {
-                    temp[0].title = data.title;
-                }           
-                if (data.content) {
-                    temp[0].content = data.content;
-                }
-                if (data.post_image_path) {
-                    temp[0].post_image_path = data.post_image_path;
-                }
-                temp[0].updated_at = getTime();
-                postsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
-                return 1;
-            }
-            catch (err) {
-                console.log(err)
-                return 0;
-            }
+
+        try{
+            const SQL = `select member.nickname, member.profile_image_path, post.id, post.title, post.content, post.post_image_path, date_format(post.updated_at, "%y-%m-%d %h:%m:%s") as updated_at, post.like_count, post.hits_count, post.replys_count from post join member on post.userId = member.id where post.id = ?`;
+            let results = await dbPool.query(SQL, [id]);
+            results[0][0].hits_count = hits_count;
+
+            const sql = `update post set hits_count = ? where id = ?`;
+            const result = await dbPool.query(sql, [hits_count, id]);
+            return results[0][0];
         }
-        else {
-            return -1;
+        catch(err){
+            console.log(`db error detected in readPost read content => ${err}`)
+            return 0;
         }
     },
-    deletePost: (id) => {
-        let postsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', 'utf8'));
-        const posts = postsAll.find(post => post.id == id);
-        if (posts !== undefined && !posts.deleted_at) {
-            try {
-                const index = postsAll.findIndex(post => post.id == id);
-                const temp = postsAll.splice(index, 1);
-                temp[0].deleted_at = getTime();
-                postsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/post.json', JSON.stringify(postsAll), 'utf8');
-                return 1;
+    editPost: async (userId, id, data) => {
+        const title = data.title;
+        const content = data.content;
+        const post_image_path = data.post_image_path;
+        try{
+            const SQL = `select count(*) from post where id = ? and deleted_at is null`;
+            const results = await dbPool.query(SQL, [id]);
+            if(results[0][0]["count(*)"] == 0){
+                return -1;
             }
-            catch (err) {
-                console.log(err)
-                return 0;
+
+            const sql = `select userId from post where id = ?`;
+            const result = await dbPool.query(sql, [id]);
+            if(result[0][0]["userId"] != userId){
+                return -2;
             }
         }
-        else {
-            return -1;
+        catch(err){
+            console.log(`db error detected in editPost alive & permission check => ${err}`)
+            return 0;
+        }
+
+        try{
+            const SQL = `update post set title = ?, content = ?, post_image_path = ? where id = ?`;
+            const results = await dbPool.query(SQL, [title, content, post_image_path, id]);
+            return 1;
+        }
+        catch(err){
+            console.log(`db error detected in editPost update => ${err}`)
+            return 0;
+        }
+    },
+    deletePost: async (userId, id) => {
+        const deleted_at = getTime();
+        try{
+            const SQL = `select count(*) from post where id = ?`;
+            const results =await dbPool.query(SQL, [id]);
+            if(results[0][0]["count(*)"] == 0){
+                return -1
+            }
+
+            const sql = `select userId from post where id = ?`;
+            const result = await dbPool.query(sql, [id]);
+            if(result[0][0]["userId"] != userId){
+                return -2;
+            }
+        }
+        catch(err){
+            console.log(`db error detected in deletePost alive & permission check => ${err}`)
+            return 0;
+        }
+
+        try{
+            const SQL = `update post set deleted_at = ? where id = ? `;
+            const results = await dbPool.query(SQL, [deleted_at, id]);
+            return 1;
+        }
+        catch(err){
+            console.log(`db error detected in deletePost update => ${err}`)
+            return 0;
         }
     }
 }

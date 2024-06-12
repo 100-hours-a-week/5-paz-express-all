@@ -2,10 +2,12 @@ import { getCookie, setCookie, deleteCookie } from '../../utils/cookie.js';
 import { API } from "../../config.js";
 
 let image_path = "";
+let nickname = "";
 // 초기 데이터 로딩
 setInfo();
 async function setInfo() {
     const cookie_image = getCookie("image_path");
+    image_path = cookie_image;
 
     const response = await fetch(`${API.users}`, {
         method: "GET",
@@ -27,6 +29,7 @@ async function setInfo() {
         document.getElementsByClassName("image")[0].src = cookie_image;
         document.getElementsByClassName("fixedText")[0].innerText = data.data.email;
         document.getElementsByClassName("textInput")[0].value = data.data.nickname;
+        nickname = data.data.nickname;
     }else if (response.status == 400) {
         alert("정보 조회에 실패하였습니다. 새로 고침을 해주세요.");
     }
@@ -37,8 +40,9 @@ async function setInfo() {
 
 
 window.modify = async function modify() {
-    let nickname = await nicknameChk();
-    const params = JSON.stringify({ "profile_image": image_path, "nickname": nickname });
+    // 중복검사를 true false로 거를 수 있는 방법을 고려
+    //***** 중요함 꼭 고쳐야함. */
+    const params = JSON.stringify({ "profile_image_path": image_path, "nickname": nickname });
     let response = await fetch(`${API.users}`, {
         method: "PATCH",
         headers: {
@@ -102,7 +106,7 @@ window.uploadImage = async function uploadImage() {
 }
 // 닉네임 유효성 검사
 window.nicknameChk = async function nicknameChk() {
-    let nickname = document.getElementById("nickname").value;
+    nickname = document.getElementById("nickname").value;
     let nickHelper = document.getElementsByClassName("helperText")[0];
     let duplChk = await isDuplicated(nickname);
 

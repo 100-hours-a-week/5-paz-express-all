@@ -220,6 +220,10 @@ async function getComment(id) {
     if (response.status == 200) {
         return result.data;
     }
+    else if (response.status == 403){
+        alert("해당 댓글을 수정할 권한을 가지고 있지 않습니다. 본인이 작성한 댓글이 맞는지 확인해주세요.");
+        window.location.reload();
+    }
     else if (response.status == 404) {
         alert("댓글 정보를 찾을 수가 없습니다. 새로고침을 눌러주세요");
     }
@@ -242,6 +246,10 @@ window.addModifiedComment = async function addModifiedComment(id) {
     })
     if (response.status == 201) {
         alert("댓글 수정을 성공적으로 완료하였습니다.");
+        window.location.reload();
+    }
+    else if(response.status == 403){
+        alert("해당 댓글을 수정할 권한을 가지고 있지 않습니다. 본인이 작성한 댓글이 맞는지 확인해주세요.");
         window.location.reload();
     }
     else if (response.status == 404) {

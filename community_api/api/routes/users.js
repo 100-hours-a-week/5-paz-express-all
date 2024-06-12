@@ -21,6 +21,6 @@ router.patch('/', modifyInfo);
 
 router.put('/', changePassword);
 
-router.delete('/:userId', deleteUser);
+router.delete('/', deleteUser);
 
 module.exports = router;

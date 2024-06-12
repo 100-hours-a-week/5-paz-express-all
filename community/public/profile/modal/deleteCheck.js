@@ -10,7 +10,8 @@ window.deleteAccount = async function deleteAccount() {
         method: "DELETE",
         header: {
             "Content-Type": "application/json"
-        }
+        },
+        credentials: "include"
     });
     if (response.status==200){
         alert("계정이 성공적으로 삭제되었습니다.")
