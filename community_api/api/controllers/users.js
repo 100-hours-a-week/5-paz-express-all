@@ -2,8 +2,8 @@ const model = require('../models/users');
 
 module.exports = {
     // 로그인
-    login: (req, res) => {
-        const result = model.login(req.body);
+    login: async(req, res) => {
+        const result = await model.login(req.body);
         if (result == -1) {
             res.status(404).json({ "message": "user_not_found" });
         }
@@ -16,7 +16,7 @@ module.exports = {
                 "message": "login_success",
                 "data": {
                     "id": result.id,
-                    "profile_image_path": result.path
+                    "profile_image_path": result.profile_image_path
                 }
             });
         }
@@ -33,8 +33,8 @@ module.exports = {
         res.status(200).json({ "message": "logout_success" });
     },
     // 회원가입
-    signin: (req, res) => {
-        const result = model.signin(req.body);
+    signin: async(req, res) => {
+        const result = await model.signin(req.body);
         if (result) {
             res.status(201).json({ "message": "account_create_success" });
         }
@@ -43,8 +43,8 @@ module.exports = {
         }
     },
     // 이메일 중복체크
-    emailChk: (req, res) => {
-        const result = model.emailChk(req.query.email);
+    emailChk: async(req, res) => {
+        const result = await model.emailChk(req.query.email);
         if (result) {
             res.status(400).json({ "message": "email_already_exist" });
         }
@@ -54,8 +54,8 @@ module.exports = {
 
     },
     // 닉네임 중복체크
-    nicknameChk: (req, res) => {
-        const result = model.nicknameChk(req.query.nickname);
+    nicknameChk: async(req, res) => {
+        const result = await model.nicknameChk(req.query.nickname);
         if (result) {
             res.status(400).json({ "message": "nickname_already_exist" });
         }
@@ -64,13 +64,13 @@ module.exports = {
         }
     },
     // id로 정보 조회
-    getInfo: (req, res) => {
+    getInfo: async(req, res) => {
         // 권한 체크
         if (req.session.user == undefined) {
             res.status(401).json({ "message": "unauthorized" });
         }
         else {
-            const result = model.readInfo(req.session.user.id);
+            const result = await model.readInfo(req.session.user.id);
             if (result) {
                 res.status(200).json({
                     "message": "user_info_read_success",
@@ -83,12 +83,12 @@ module.exports = {
         }
     },
     // id 기준 정보 수정
-    modifyInfo: (req, res) => {
+    modifyInfo: async (req, res) => {
         // 권한 체크
         if (req.session.user == undefined) {
             res.status(401).json({ "message": "unauthorized" });
         }
-        const result = model.modifyInfo(req.session.user.id, req.body);
+        const result = await model.modifyInfo(req.session.user.id, req.body);
         if (result == 1) {
             res.status(201).json({ "message": "user_info_modify_success" });
         }
@@ -100,12 +100,12 @@ module.exports = {
         }
     },
     // id 기준 비밀번호 수정
-    changePassword: (req, res) => {
+    changePassword: async (req, res) => {
         // 권한 체크
         if (req.session.user == undefined) {
             res.status(401).json({ "message": "unauthorized" });
         }
-        const result = model.changePassword(req.session.user.id, req.body.password);
+        const result = await model.changePassword(req.session.user.id, req.body.password);
         if (result == 1) {
             res.status(200).json({ "message": "user_password_change_success" });
         }
@@ -117,12 +117,13 @@ module.exports = {
         }
     },
     // 유저 삭제
-    deleteUser: (req, res) => {
+    deleteUser: async (req, res) => {
+        console.log(req.session.user)
         // 권한 체크
         if (req.session.user == undefined) {
             res.status(401).json({ "message": "unauthorized" });
         }
-        const result = model.deleteUser(req.session.user.id);
+        const result = await model.deleteUser(req.session.user.id);
         if (result == 1) {
             res.status(200).json({ "message": `${req.session.user.id} id deleted.` });
         }

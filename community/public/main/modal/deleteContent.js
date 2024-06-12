@@ -17,6 +17,10 @@ window.deleteContent = async function deleteContent() {
         alert("게시글을 성공적으로 삭제하였습니다.");
         location.replace("/community/main");
     }
+    else if(response.status == 403){
+        alert("게시글을 작성한 본인만 삭제가 가능합니다.");
+        location.replace("/community/main");
+    }
     else if(response.status == 404){
         alert("게시글을 찾을 수가 없습니다.");
     }

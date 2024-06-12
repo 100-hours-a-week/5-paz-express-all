@@ -1,107 +1,155 @@
-const fs = require('fs');
-const db = require('../db/comment.json');
-const member_db = require('../db/member.json')
+const dbPool = require("../db/db.config.js");
 const { getTime } = require('../utils/util.js');
 
 module.exports = {
-    readAllComments: (postId) => {
-        let commentsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', 'utf8'));
-        const comments = commentsAll.filter(comment => comment.postId == postId && comment.deleted_at == null);
+    readAllComments: async (postId) => {
         try{
-            comments.forEach(comment => {
-                const member = member_db.find(member => member.id == comment.userId);
-                comment.nickname = member.nickname;
-                comment.profile_image_path = member.profile_image_path;
-            })
-            return comments
+            const SQL = `select count(*) from post where id = ?`;
+            const results = await dbPool.query(SQL,[postId]);
+            if(results[0][0]["count(*)"] == 0){
+                return -1;
+            }
         }
-        catch(err){ 
-            console.log(err)
+        catch(err){
+            console.log(`db error detected in readAllComments post alive check => ${err}`)
+            return 0;
+        }
+
+        try{
+            const SQL = `select member.nickname, member.profile_image_path, comment.id, date_format(comment.updated_at, "%y-%m-%d %h:%m:%s") as updated_at, comment.comment from comment join member on comment.userId = member.id where comment.postId = ?`;
+            const results = await dbPool.query(SQL, [postId]);
+            return results[0];
+        }
+        catch(err){
+            console.log(`db error detected in readAllComments => ${err}`)
             return 0;
         }
     },
-    makeComment: (postId, userId, data) => {
-        let comments = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', 'utf8'));
-        try {
-            data.postId = postId;
-            data.id = comments.length + 1;
-            data.userId = userId;
-            data.created_at = getTime();
-            data.updated_at = getTime();
-            data.deleted_at = null;
-            comments.push(data);
-            fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json',JSON.stringify(comments),'utf8');
+    makeComment: async (postId, userId, data) => {
+        let id;
+        const comment = data.comment;
+        const created_at = getTime();
+        const updated_at = getTime();
+        const deleted_at = null;
+        let counter;
+        try{
+            const SQL = `select count(*) from post where id = ?`;
+            const results = await dbPool.query(SQL,[postId]);
+            if(results[0][0]["count(*)"] == 0){
+                return -1;
+            }
+            counter = results[0][0]["count(*)"] + 1;
 
+            const sql = `select count(*) from comment`; // id 값을 입력하기 위함
+            const count = await dbPool.query(sql);
+            id = count[0][0]["count(*)"] + 1;
+        }
+        catch(err){
+            console.log(`db error detected in makeComment post alive check => ${err}`)
+            return 0;
+        }
+
+        try{
+            const SQL = `insert into comment values (?, ?, ?, ?, ?, ?, ?)`;
+            const results = await dbPool.query(SQL, [id, postId, userId, comment, created_at, updated_at, deleted_at]);
+
+            const sql = `update post set replys_count = ? where id = ?`;
+            const result = await dbPool.query(sql, [counter, postId]);
             return 1;
         }
-        catch (err) {
-            console.log(err)
+        catch(err){
+            console.log(`db error detected in makeComment insert => ${err}`)
             return 0;
         }
     },
-    readComment: (commentId) => {
-        let commentsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', 'utf8'));
-        const comment = commentsAll.find(comment => comment.id == commentId);
-        if(comment !== undefined && !comment.deleted_at){
-            try{
-                const member = member_db.find(member => member.id == comment.userId);
-                comment.nickname = member.nickname;
-                comment.profile_image_path = member.profile_image_path;
-                return comment;
+    readComment: async (userId, commentId) => {
+        try{
+            const SQL = `select count(*) from comment where id = ?`;
+            const results = await dbPool.query(SQL, [commentId]);
+            if(results[0][0]["comment(*)"] == 0){
+                return -1;
             }
-            catch(err){
-                console.log(err)
-                return 0;
+
+            const sql = `select userId from comment where id = ?`;
+            const result = await dbPool.query(sql, [commentId]);
+            if(result[0][0]["userId"] != userId){
+                return -2; // 권한 부족
             }
         }
-        else{
-            return -1;
+        catch(err){
+            console.log(`db error detected in readComment alive check => ${err}`);
+            return 0;
         }
 
-    },
-    modifyComment: (commentId, data) => {
-        let commentsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', 'utf8'));
-        const comments = commentsAll.find(comment => comment.id == commentId);
-        if(comments !== undefined && !comments.deleted_at){
-            try{
-                const index = commentsAll.findIndex(comment => comment.id == commentId);
-                const temp = commentsAll.splice(index, 1);
-                if(data.comment){
-                    temp[0].comment = data.comment;
-                }
-                temp[0].updated_at = getTime();
-                commentsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', JSON.stringify(commentsAll), 'utf8');
-                return 1;
-            }
-            catch(err) {
-                console.log(err)
-                return 0;
-            }
+        try{
+            const SQL = `select id, comment from comment where id = ?`;
+            const results = await dbPool.query(SQL, [commentId]);
+            return results[0][0];
         }
-        else{
-            return -1
+        catch(err){
+            console.log(`db error detected in readComment read => ${err}`)
+            return 0;
         }
     },
-    deleteComment: (commentId) => {
-        let commentsAll = JSON.parse(fs.readFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', 'utf8'));
-        const comment = commentsAll.find(comment => comment.id == commentId);
-        if(comment !== undefined && !comment.deleted_at) {
-            try{
-                const index = commentsAll.findIndex(comment => comment.id == commentId);
-                const temp = commentsAll.splice(index, 1);
-                temp[0].deleted_at = getTime();
-                commentsAll.splice(index, 0, temp[0]);
-                fs.writeFileSync('/home/app/5-paz-express-all/community_api/api/db/comment.json', JSON.stringify(commentsAll), 'utf8');
-                return 1;
+    modifyComment: async (userId, commentId, data) => {
+        const comment = data.comment;
+        const updated_at = getTime();
+        try{
+            const SQL = `select count(*) from comment where id = ?`;
+            const results = await dbPool.query(SQL, [commentId]);
+            if(results[0][0]["comment(*)"] == 0){
+                return -1;
             }
-            catch (err) {
-                console.log(err)
-                return 0;
+
+            const sql = `select userId from comment where id = ?`;
+            const result = await dbPool.query(sql, [commentId]);
+            if(result[0][0]["userId"] != userId){
+                return -2; // 권한 부족
             }
         }
-        else {
-            return -1;
+        catch(err){
+            console.log(`db error detected in modifyComment alive check => ${err}`);
+            return 0;
+        }
+
+        try{
+            const SQL = `update comment set comment = ?, updated_at = ? where id = ?`;
+            const results = await dbPool.query(SQL, [comment, updated_at, commentId]);
+            return 1;
+        }
+        catch(err){
+            console.log(`db.error detected in modifyComment update => ${err}`);
+            return 0;
+        }
+    },
+    deleteComment: async (userId, commentId) => {
+        const deleted_at = getTime();
+        try{
+            const SQL = `select count(*) from comment where id = ?`;
+            const results = await dbPool.query(SQL, [commentId]);
+            if(results[0][0]["comment(*)"] == 0){
+                return -1;
+            }
+
+            const sql = `select userId from comment where id = ?`;
+            const result = await dbPool.query(sql, [commentId]);
+            if(result[0][0]["userId"] != userId){
+                return -2; // 권한 부족
+            }
+        }
+        catch(err){
+            console.log(`db error detected in modifyComment alive check => ${err}`);
+            return 0;
+        }
+
+        try{
+            const SQL = `update comment set deleted_at = ? where id = ?`;
+            const results = await dbPool.query(SQL, [deleted_at, commentId]);
+            return 1;
+        }
+        catch(err){
+            console.log(`db error detected in deleteComment delete => ${err}`)
+            return 0;
         }
     }
 }
